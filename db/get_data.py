@@ -266,43 +266,42 @@ def get_data():
             )
         )
 
-    db = DbServices()
+    with DbServices() as db:
+        """DROPPING EXISTING DATA"""
+        print("Drop existing data")
+        table_to_delete = ["buildings", "rooms", "sections", "subjects"]
+        for i in table_to_delete:
+            try:
+                db.cursor.execute(f"DELETE FROM {i}")
+                db.connection.commit()
+                print(f"\t[OK] droped data from table {i}")
+            except Exception as e:
+                print(f"\t[ERROR] failed to drop table {i}:\n\t{e}")
 
-    """ DROPPING EXISTING DATA """
-    print("Drop existing data")
-    table_to_delete = ["buildings", "rooms", "sections", "subjects"]
-    for i in table_to_delete:
-        try:
-            db.cursor.execute(f"DELETE FROM {i}")
-            db.connection.commit()
-            print(f"\t[OK] droped data from table {i}")
-        except Exception as e:
-            print(f"\t[ERROR] failed to drop table {i}:\n\t{e}")
+        """ SAVING NEW DATA """
+        print("Saving to .database.db")
+        func_map = {
+            "subjects": set_subjects,
+            "buildings": set_buildings,
+            "rooms": set_rooms,
+            "sessions": set_class_session,
+        }
 
-    """ SAVING NEW DATA """
-    print("Saving to .database.db")
-    func_map = {
-        "subjects": set_subjects,
-        "buildings": set_buildings,
-        "rooms": set_rooms,
-        "sessions": set_class_session,
-    }
+        for k, v in func_map.items():
+            try:
+                v(data, db)
+                print(f"\t[PENDING] saved: {k}")
+            except Exception as e:
+                print(f"[ERROR] failed to save {k}:\n\t{e}")
+                sys.exit()
 
-    for k, v in func_map.items():
-        try:
-            v(data, db)
-            print(f"\t[PENDING] saved: {k}")
-        except Exception as e:
-            print(f"[ERROR] failed to save {k}:\n\t{e}")
-            sys.exit()
+        print("\t[OK] saved all data to `.database.db`")
 
-    print("\t[OK] saved all data to `.database.db`")
+        """ GENERATING BACKUP FILE """
+        print("\nGenerating backup json")
+        file_name = f"./config/db/backups/data_{term}.json"
+        with open(file_name, "w+") as f:
+            f.write(json.dumps(data, indent=2))
+            print(f"\t[OK] generated {file_name}")
 
-    """ GENERATING BACKUP FILE """
-    print("\nGenerating backup json")
-    file_name = f"./config/db/backups/data_{term}.json"
-    with open(file_name, "w+") as f:
-        f.write(json.dumps(data, indent=2))
-        print(f"\t[OK] generated {file_name}")
-
-    print(f"\n[DONE] took {(time.time() - time_now) * 1000}ms")
+        print(f"\n[DONE] took {(time.time() - time_now) * 1000}ms")
