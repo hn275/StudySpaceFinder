@@ -11,7 +11,7 @@ Server for [Study Space Finder](https://github.com/Scott-Kenning/StudySpaceFinde
 
 > All GETs, no POST.
 
-#### `/api/building/all`
+#### `/api/buildings/all`
 
 Returns an array of building objects:
 
@@ -22,7 +22,7 @@ Returns an array of building objects:
 ]
 ```
 
-#### `/api/building/{building_id}`
+#### `/api/buildings/{building_id}`
 
 - Queries:
   - `hour`: between 0 and 24, inclusive
@@ -55,7 +55,51 @@ example: `/api/building/22?hour=10&minute=10&day=5`
 
 - `next_class` is `null` if the class is free until end of day
 
-#### `/api/room/{room_id}`
+#### `/api/rooms`
+
+- Query:
+  - `building_id`: int
+
+Returns a json with rooms within the building and the building info.
+
+example: `/api/rooms?building_id=1`
+
+```json
+{
+  "building": {
+    "building_id": 1,
+    "building": "Petch Building"
+  },
+  "rooms": [
+    {
+      "room_id": 99,
+      "room": "110"
+    },
+    {
+      "room_id": 185,
+      "room": "145"
+    },
+    {
+      "room_id": 222,
+      "room": "159"
+    },
+    {
+      "room_id": 227,
+      "room": "109"
+    },
+    {
+      "room_id": 244,
+      "room": "141"
+    },
+    {
+      "room_id": 274,
+      "room": "107"
+    }
+  ]
+}
+```
+
+#### `/api/rooms/{room_id}`
 
 Returns a json containing the full schedule of the requested room.
 

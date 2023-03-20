@@ -1,16 +1,21 @@
 from fastapi import HTTPException
 from services.db import DbServices
-from models import Room, RoomDetail, RoomSchedule, SectionDetail
+from models import RoomDetail, RoomSchedule, SectionDetail
 
 
 def get_all_rooms(building_id: int):
     with DbServices() as db:
-        building_name = db.cursor.execute(
+        building = db.cursor.execute(
             """
             SELECT name FROM buildings WHERE id = ?
             """,
             (building_id,),
-        ).fetchone()[0]
+        ).fetchone()
+
+        if building is None:
+            raise HTTPException(
+                status_code=404, detail=f"Building id {building_id} not found."
+            )
 
         result = db.cursor.execute(
             """
@@ -24,8 +29,8 @@ def get_all_rooms(building_id: int):
         ).fetchall()
 
         return {
-            "building": {"id": building_id, "building": building_name},
-            "rooms": [Room(id=id, room=room) for (id, room) in result],
+            "building": {"building_id": building_id, "building": building[0]},
+            "rooms": [{"room_id": id, "room": room} for (id, room) in result],
         }
 
 

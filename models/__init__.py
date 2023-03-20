@@ -40,8 +40,3 @@ class RoomDetail(BaseModel):
     building: str
     room: str
     schedules: RoomSchedule
-
-
-class Room(BaseModel):
-    id: int
-    room: str

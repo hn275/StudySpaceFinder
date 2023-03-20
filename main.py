@@ -79,5 +79,5 @@ def serve_room_details(room_id: int):
 
 
 @app.get("/api/rooms")
-def get_all_rooms(building: int):
-    return services.get_all_rooms(building)
+def get_all_rooms(building_id: int):
+    return services.get_all_rooms(building_id)
