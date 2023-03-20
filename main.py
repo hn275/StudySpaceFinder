@@ -19,10 +19,7 @@ DAY_MAP: Dict[int, str] = {
 
 app = FastAPI()
 
-origins = [
-    "http://localhost:3000",
-    # TODO: deployed url here
-]
+origins = ["http://localhost:3000", "*"]
 
 app.add_middleware(CORSMiddleware, allow_origins=origins, allow_methods=["GET"])
 

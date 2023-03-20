@@ -110,15 +110,6 @@ def get_room_details(room_id: int):
                 time_end=time_end,
             )
 
-            """
-            entry = {
-                "subject": subject,
-                "section": section,
-                "time_start": time_start,
-                "time_end": time_end,
-            }
-            """
-
             if sunday:
                 schedules.Sunday.append(entry)
             if monday:
