@@ -1,6 +1,32 @@
 from fastapi import HTTPException
 from services.db import DbServices
-from models import RoomDetail, RoomSchedule, SectionDetail
+from models import Room, RoomDetail, RoomSchedule, SectionDetail
+
+
+def get_all_rooms(building_id: int):
+    with DbServices() as db:
+        building_name = db.cursor.execute(
+            """
+            SELECT name FROM buildings WHERE id = ?
+            """,
+            (building_id,),
+        ).fetchone()[0]
+
+        result = db.cursor.execute(
+            """
+            SELECT 
+                id,
+                room
+            FROM rooms 
+            WHERE building_id = ?
+            """,
+            (building_id,),
+        ).fetchall()
+
+        return {
+            "building": {"id": building_id, "building": building_name},
+            "rooms": [Room(id=id, room=room) for (id, room) in result],
+        }
 
 
 def get_room_details(room_id: int):

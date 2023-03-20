@@ -41,7 +41,7 @@ def index():
 
 
 @app.get(
-    "/api/building/all",
+    "/api/buildings/all",
     status_code=200,
     response_model=List[Building],
 )
@@ -51,7 +51,7 @@ def serve_building_names():
 
 # ie: /api/building/1?hour=13&minute=30&day=1
 @app.get(
-    "/api/building/{bldg_id}",
+    "/api/buildings/{bldg_id}",
     status_code=200,
     response_model=BuildingSummary,
 )
@@ -70,9 +70,14 @@ def serve_building_details(bldg_id: int, hour: int, minute: int, day: int):
 
 # ie: /api/room/20?day=1
 @app.get(
-    "/api/room/{room_id}",
+    "/api/rooms/{room_id}",
     status_code=200,
     response_model=RoomDetail,
 )
 def serve_room_details(room_id: int):
     return services.get_room_details(room_id)
+
+
+@app.get("/api/rooms")
+def get_all_rooms(building: int):
+    return services.get_all_rooms(building)
