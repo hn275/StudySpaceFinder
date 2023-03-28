@@ -2,7 +2,7 @@ import json
 from typing import List, Dict
 from fastapi import FastAPI, HTTPException
 
-# from fastapi.middleware.cors import CORSMiddleware
+from fastapi.middleware.cors import CORSMiddleware
 from models import Building, BuildingSummary, RoomDetail
 import services
 
@@ -20,9 +20,7 @@ DAY_MAP: Dict[int, str] = {
 
 app = FastAPI()
 
-# origins = ["http://localhost:3000", "*"]
-
-# app.add_middleware(CORSMiddleware, allow_origins=origins, allow_methods=["GET"])
+app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["GET"])
 
 
 @app.get("/", status_code=200)
