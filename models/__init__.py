@@ -40,3 +40,12 @@ class RoomDetail(BaseModel):
     building: str
     room: str
     schedules: RoomSchedule
+
+
+class Session(BaseModel):
+    time_start_str: str
+    room_id: int
+    room: str
+    subject: str
+    time_start_int: int
+    time_end_int: int

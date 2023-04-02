@@ -1,6 +1,7 @@
 from typing import List
 from fastapi import HTTPException
-from models import Building, RoomSummary, BuildingSummary
+from lib.get_next_class import get_next_class
+from models import Building, RoomSummary, BuildingSummary, Session
 
 from services.db import DbServices
 
@@ -18,7 +19,8 @@ def get_building_names() -> List[Building]:
 def get_building_at_time(
     bldg_id: int, hour: int, minute: int, day: str
 ) -> BuildingSummary:
-    seconds = hour * 3600 + minute * 60
+    current_time = hour * 3600 + minute * 60
+
     with DbServices() as db:
         # get building name
         building_name = db.cursor.execute(
@@ -53,7 +55,9 @@ def get_building_at_time(
                         sections.time_start_str,
                         rooms.id,
                         rooms.room,
-                        subjects.subject
+                        subjects.subject,
+                        sections.time_start_int,
+                        sections.time_end_int
                     FROM sections 
                         JOIN rooms 
                             ON sections.room_id=rooms.id
@@ -61,15 +65,13 @@ def get_building_at_time(
                             ON sections.subject_id=subjects.id
                     WHERE sections.room_id=? 
                         AND {day}=true
-                        AND time_start_int>?
                     ORDER BY time_start_int ASC
-                    LIMIT 1;
                     """,
-                (room_id, seconds),
+                (room_id,),
             )
 
-            result = query.fetchone()
-            if result is None:
+            result = query.fetchall()
+            if result is None or len(result) == 0:
                 out.append(
                     RoomSummary(
                         room_id=room_id,
@@ -80,6 +82,30 @@ def get_building_at_time(
                 )
                 continue
 
+            payload = [
+                Session(
+                    time_start_str=time_start_str,
+                    room_id=room_id,
+                    room=room,
+                    subject=subject,
+                    time_start_int=time_start_int,
+                    time_end_int=time_end_int,
+                )
+                for (
+                    time_start_str,
+                    room_id,
+                    room,
+                    subject,
+                    time_start_int,
+                    time_end_int,
+                ) in result
+            ]
+
+            next_class = get_next_class(payload, current_time)
+            if next_class:
+                out.append(next_class)
+
+            """
             (time_start, room_id, room, subject) = result
             out.append(
                 RoomSummary(
@@ -89,5 +115,6 @@ def get_building_at_time(
                     subject=subject,
                 )
             )
+            """
 
         return BuildingSummary(building=building_name, data=out)
