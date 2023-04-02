@@ -2,7 +2,7 @@ name: deploy-on-merge
 on:
   push:
     branches:
-      - main
+      - release
 
 jobs:
   deploy:
