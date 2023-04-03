@@ -105,16 +105,4 @@ def get_building_at_time(
             if next_class:
                 out.append(next_class)
 
-            """
-            (time_start, room_id, room, subject) = result
-            out.append(
-                RoomSummary(
-                    room_id=room_id,
-                    room=room_name,
-                    next_class=time_start,
-                    subject=subject,
-                )
-            )
-            """
-
-        return BuildingSummary(building=building_name, data=out)
+        return BuildingSummary(building=building_name.replace("&amp;", "&"), data=out)
