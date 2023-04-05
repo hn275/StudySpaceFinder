@@ -1,10 +1,10 @@
 import json
-from typing import List, Dict
-from fastapi import FastAPI, HTTPException
+from typing import Dict
+from fastapi import FastAPI
 
 from fastapi.middleware.cors import CORSMiddleware
-from lib.validate_time import validate_time
-from models import Building, BuildingSummary, RoomDetail
+from models import RoomDetail
+from routers.buildings import building_router
 import services
 
 
@@ -37,30 +37,7 @@ def index():
     return {"project": project, "disclaimer": disclaimer}
 
 
-@app.get(
-    "/api/buildings/all",
-    status_code=200,
-    response_model=List[Building],
-)
-def serve_building_names():
-    return services.get_building_names()
-
-
-# ie: /api/building/1?hour=13&minute=30&day=1
-@app.get(
-    "/api/buildings/{bldg_id}",
-    status_code=200,
-    response_model=BuildingSummary,
-)
-def serve_building_details(bldg_id: int, hour: int, minute: int, day: int):
-    if not validate_time(hour, minute, day):
-        raise HTTPException(status_code=400, detail="Invalid query time query")
-
-    weekday = DAY_MAP.get(day)
-    if not weekday:
-        raise HTTPException(status_code=400, detail="Invalid day query")
-
-    return services.get_building_at_time(bldg_id, hour, minute, weekday)
+app.include_router(building_router)
 
 
 # ie: /api/room/20?day=1

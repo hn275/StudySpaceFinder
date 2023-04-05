@@ -1,6 +1,6 @@
 from typing import List, Optional
 
-from models import RoomSummary, Session
+from schemas import RoomSummary, Session
 
 
 def _is_in_range(session: Session, current_time: int) -> bool:
