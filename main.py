@@ -1,10 +1,10 @@
 import json
-from typing import List, Dict
-from fastapi import FastAPI, HTTPException
+from typing import Dict
+from fastapi import FastAPI
 
 from fastapi.middleware.cors import CORSMiddleware
-from models import Building, BuildingSummary, RoomDetail
-import services
+from routers.buildings import building_router
+from routers.rooms import room_router
 
 
 DAY_MAP: Dict[int, str] = {
@@ -36,44 +36,5 @@ def index():
     return {"project": project, "disclaimer": disclaimer}
 
 
-@app.get(
-    "/api/buildings/all",
-    status_code=200,
-    response_model=List[Building],
-)
-def serve_building_names():
-    return services.get_building_names()
-
-
-# ie: /api/building/1?hour=13&minute=30&day=1
-@app.get(
-    "/api/buildings/{bldg_id}",
-    status_code=200,
-    response_model=BuildingSummary,
-)
-def serve_building_details(bldg_id: int, hour: int, minute: int, day: int):
-    valid_hour: bool = 0 <= hour <= 24
-    valid_minute: bool = 0 <= minute <= 60
-    if not valid_hour or not valid_minute:
-        raise HTTPException(status_code=400, detail="Invalid query time query")
-
-    weekday = DAY_MAP.get(day)
-    if not weekday:
-        raise HTTPException(status_code=400, detail="Invalid day query")
-
-    return services.get_building_at_time(bldg_id, hour, minute, weekday)
-
-
-# ie: /api/room/20?day=1
-@app.get(
-    "/api/rooms/{room_id}",
-    status_code=200,
-    response_model=RoomDetail,
-)
-def serve_room_details(room_id: int):
-    return services.get_room_details(room_id)
-
-
-@app.get("/api/rooms")
-def get_all_rooms(building_id: int):
-    return services.get_all_rooms(building_id)
+app.include_router(building_router)
+app.include_router(room_router)

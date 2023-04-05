@@ -5,7 +5,7 @@ import time
 from typing import Any, Dict, List, Set, Tuple
 from urllib import parse
 
-from services.db import DbServices
+from .database import Database
 
 _BANNER_BASE = "https://banner.uvic.ca/StudentRegistrationSsb/ssb/"
 
@@ -17,7 +17,7 @@ def _search_result_url(offset: int, term: str) -> str:
     return f"{base}?{parse.urlencode(q)}"
 
 
-def set_subjects(fetched_data: List[Dict[str, Any]], db: DbServices):
+def set_subjects(fetched_data: List[Dict[str, Any]], db: Database):
     data = list()
     for i in fetched_data:
         subject = i["subjectCourse"]
@@ -36,7 +36,7 @@ def set_subjects(fetched_data: List[Dict[str, Any]], db: DbServices):
     db.connection.commit()
 
 
-def set_buildings(fetched_data: List[Dict[str, Any]], db: DbServices):
+def set_buildings(fetched_data: List[Dict[str, Any]], db: Database):
     data = set()
     for i in fetched_data:
         meetings_faculty: Any = i.get("meetingsFaculty")
@@ -63,7 +63,7 @@ def set_buildings(fetched_data: List[Dict[str, Any]], db: DbServices):
     db.connection.commit()
 
 
-def set_rooms(fetched_data: List[Dict[str, Any]], db: DbServices):
+def set_rooms(fetched_data: List[Dict[str, Any]], db: Database):
     data: Set[Tuple] = set()
     for i in fetched_data:
         meetings_faculty = i.get("meetingsFaculty")
@@ -122,7 +122,7 @@ def _format_time_str(time: str) -> str:
     return f"{hour}:{min:02} {prefix}"
 
 
-def set_class_session(fetched_data: List[Dict[str, Any]], db: DbServices):
+def set_class_session(fetched_data: List[Dict[str, Any]], db: Database):
     data: List[Tuple] = list()
     for i in fetched_data:
         subject = i.get("subjectCourse")
@@ -266,7 +266,7 @@ def get_data():
             )
         )
 
-    with DbServices() as db:
+    with Database() as db:
         """DROPPING EXISTING DATA"""
         print("Drop existing data")
         table_to_delete = ["buildings", "rooms", "sections", "subjects"]
