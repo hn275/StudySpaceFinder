@@ -1,7 +1,7 @@
-from services.db import DbServices
+from db.database import Database
 
 
-class BuildingModels(DbServices):
+class BuildingModels(Database):
     def __init__(self):
         pass
 

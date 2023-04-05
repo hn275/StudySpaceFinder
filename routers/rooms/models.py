@@ -1,7 +1,7 @@
-from services.db import DbServices
+from db.database import Database
 
 
-class RoomModel(DbServices):
+class RoomModel(Database):
     def __init__(self, room_id: int):
         self.room_id = room_id
 

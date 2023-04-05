@@ -2,7 +2,7 @@ import os
 import sqlite3 as sql
 
 
-class DbServices:
+class Database:
     def __enter__(self):
         self.connection = sql.connect(os.path.join("db", ".database.db"))
         self.cursor = self.connection.cursor()
