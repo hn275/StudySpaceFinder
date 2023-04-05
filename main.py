@@ -3,6 +3,7 @@ from typing import List, Dict
 from fastapi import FastAPI, HTTPException
 
 from fastapi.middleware.cors import CORSMiddleware
+from lib.validate_time import validate_time
 from models import Building, BuildingSummary, RoomDetail
 import services
 
@@ -52,9 +53,7 @@ def serve_building_names():
     response_model=BuildingSummary,
 )
 def serve_building_details(bldg_id: int, hour: int, minute: int, day: int):
-    valid_hour: bool = 0 <= hour <= 24
-    valid_minute: bool = 0 <= minute <= 60
-    if not valid_hour or not valid_minute:
+    if not validate_time(hour, minute, day):
         raise HTTPException(status_code=400, detail="Invalid query time query")
 
     weekday = DAY_MAP.get(day)

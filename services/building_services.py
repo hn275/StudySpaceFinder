@@ -23,9 +23,13 @@ def get_building_at_time(
 
     with DbServices() as db:
         # get building name
-        building_name = db.cursor.execute(
+        building_result = db.cursor.execute(
             "SELECT name FROM buildings WHERE id=?", (bldg_id,)
-        ).fetchone()[0]
+        ).fetchone()
+        if not building_result:
+            raise HTTPException(404, "Building not found")
+
+        building_name = building_result[0]
 
         # get all rooms
         rooms = db.cursor.execute(
