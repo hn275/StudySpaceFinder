@@ -3,9 +3,8 @@ from typing import Dict
 from fastapi import FastAPI
 
 from fastapi.middleware.cors import CORSMiddleware
-from models import RoomDetail
 from routers.buildings import building_router
-import services
+from routers.rooms import room_router
 
 
 DAY_MAP: Dict[int, str] = {
@@ -38,18 +37,4 @@ def index():
 
 
 app.include_router(building_router)
-
-
-# ie: /api/room/20?day=1
-@app.get(
-    "/api/rooms/{room_id}",
-    status_code=200,
-    response_model=RoomDetail,
-)
-def serve_room_details(room_id: int):
-    return services.get_room_details(room_id)
-
-
-@app.get("/api/rooms")
-def get_all_rooms(building_id: int):
-    return services.get_all_rooms(building_id)
+app.include_router(room_router)
