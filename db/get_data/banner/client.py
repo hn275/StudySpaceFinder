@@ -20,7 +20,7 @@ class BannerClient(requests.Session):
         )
         self.term = ""  # NOTE: set by self.get_latest_term
 
-        self._MAX_SIZE = 500
+        self._MAX_SIZE = 500  # NOTE: max from banner is 500
 
     def get_latest_term(self) -> Term:
         response = self.get(self.banner_get_term)
