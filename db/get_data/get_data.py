@@ -214,55 +214,10 @@ def set_class_session(fetched_data: List[Dict[str, Any]], db: Database):
 
 
 def get_data():
-    banner = BannerClient()
-
-    return
     time_now = time.time()
 
+    return
     """ FETCHING DATA """
-    print("\nSetting term for Banner")
-    s = requests.Session()
-    url = parse.urljoin(_BANNER_BASE, "term/search?mode=search")
-
-    response = s.post(url, data={"term": term})
-    if response.status_code != 200:
-        print(
-            f"\t[ERROR] failed to set term, Banner responded with a status code {response.status_code}"
-        )
-        sys.exit()
-
-    print("\t[OK] BANNER term set to {}\n".format(term))
-
-    print("Fetching data")
-    data = list()
-    offset = 0
-
-    print("\t[PENDING] progress: 0%")
-    while True:
-        url = _search_result_url(offset, term)
-        res = s.get(url)
-        if res.status_code != 200:
-            print(
-                f"\t[ERROR] failed to fetch offset {offset}, BANNER responded with {res.status_code}"
-            )
-            sys.exit()
-
-        res = res.json()
-        offset += 1  # for the next offset
-
-        section_fetched_count = res["sectionsFetchedCount"]
-
-        if len(res["data"]) == 0 or res["data"] is None:
-            print(f"\t[OK] received {len(data)}/{section_fetched_count} entries.\n")
-            break
-
-        data = data + res["data"]
-        print(
-            "\t[PENDING] progress: {}%".format(
-                (len(data) * 100) // (section_fetched_count)
-            )
-        )
-
     with Database() as db:
         """DROPPING EXISTING DATA"""
         print("Drop existing data")

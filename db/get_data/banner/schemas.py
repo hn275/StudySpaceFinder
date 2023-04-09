@@ -4,18 +4,17 @@ from typing import Dict, List, Any
 
 @dataclass
 class MeetingTime:
-    begin_time: str
-    building_description: str
-    category: str
-    end_time: str
+    begin_time: str  # 0830
+    building_description: str  # David Turpin Building
+    category: str  # 01
+    end_time: str  # 0950
     friday: bool
-    meeting_schedule_type: str
-    meeting_type: str
-    meeting_type_description: str
+    meeting_schedule_type: str  # LEC | TUT | LAB | GLB
+    meeting_type: str  # CLAS
+    meeting_type_description: str  # Everyweek
     monday: bool
-    room: str
+    room: str  # A111
     saturday: bool
-    startDate: str
     sunday: bool
     thursday: bool
     tuesday: bool
@@ -29,13 +28,13 @@ class MeetingsFaculty:
 
 @dataclass
 class BannerSection:
-    course_number: int
-    subject: str
-    subject_description: str
-    sequence_number: str
-    schedule_type_description: str
-    course_title: str
-    subject_course: str
+    course_number: int  # 101
+    subject: str  # MATH
+    subject_description: str  # Math
+    sequence_number: str  # A01
+    schedule_type_description: str  # Lecture | Tutorial | Lab | Lecture Topic
+    course_title: str  # Calculus II
+    subject_course: str  # MATH101
     meetings_faculty: List[MeetingsFaculty]
 
     def to_dict(self):
@@ -71,7 +70,6 @@ class BannerSection:
             monday = meeting_time["monday"]
             room = meeting_time["room"]
             saturday = meeting_time["saturday"]
-            startDate = meeting_time["startDate"]
             sunday = meeting_time["sunday"]
             thursday = meeting_time["thursday"]
             tuesday = meeting_time["tuesday"]
@@ -90,7 +88,6 @@ class BannerSection:
                     monday,
                     room,
                     saturday,
-                    startDate,
                     sunday,
                     thursday,
                     tuesday,
