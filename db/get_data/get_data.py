@@ -5,7 +5,8 @@ import time
 from typing import Any, Dict, List, Set, Tuple
 from urllib import parse
 
-from .database import Database
+from database import Database
+from db.get_data.banner import BannerClient
 
 _BANNER_BASE = "https://banner.uvic.ca/StudentRegistrationSsb/ssb/"
 
@@ -213,13 +214,9 @@ def set_class_session(fetched_data: List[Dict[str, Any]], db: Database):
 
 
 def get_data():
-    term: str
-    try:
-        term = sys.argv[2]
-    except IndexError:
-        print("missing term: ie 202301")
-        sys.exit()
+    banner = BannerClient()
 
+    return
     time_now = time.time()
 
     """ FETCHING DATA """
